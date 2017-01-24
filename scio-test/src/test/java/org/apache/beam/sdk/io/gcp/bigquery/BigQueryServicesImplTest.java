@@ -340,7 +340,10 @@ public class BigQueryServicesImplTest {
     BigQueryServicesImpl.DatasetServiceImpl datasetService =
         new BigQueryServicesImpl.DatasetServiceImpl(bigquery, PipelineOptionsFactory.create());
 
-    Table table = datasetService.getTable(tableRef, BackOff.ZERO_BACKOFF, Sleeper.DEFAULT);
+    Table table = datasetService.getTable(
+        tableRef.getProjectId(),
+        tableRef.getDatasetId(),
+        tableRef.getTableId());
 
     assertEquals(testTable, table);
     verify(response, times(2)).getStatusCode();
@@ -360,7 +363,10 @@ public class BigQueryServicesImplTest {
         .setProjectId("projectId")
         .setDatasetId("datasetId")
         .setTableId("tableId");
-    Table table = datasetService.getTable(tableRef, BackOff.ZERO_BACKOFF, Sleeper.DEFAULT);
+    Table table = datasetService.getTable(
+        tableRef.getProjectId(),
+        tableRef.getDatasetId(),
+        tableRef.getTableId());
 
     assertNull(table);
     verify(response, times(1)).getStatusCode();
@@ -383,7 +389,10 @@ public class BigQueryServicesImplTest {
 
     BigQueryServicesImpl.DatasetServiceImpl datasetService =
         new BigQueryServicesImpl.DatasetServiceImpl(bigquery, PipelineOptionsFactory.create());
-    datasetService.getTable(tableRef, BackOff.STOP_BACKOFF, Sleeper.DEFAULT);
+    datasetService.getTable(
+        tableRef.getProjectId(),
+        tableRef.getDatasetId(),
+        tableRef.getTableId());
   }
 
   @Test
@@ -407,7 +416,10 @@ public class BigQueryServicesImplTest {
         new BigQueryServicesImpl.DatasetServiceImpl(bigquery, PipelineOptionsFactory.create());
 
     assertFalse(
-        datasetService.isTableEmpty(tableRef, BackOff.ZERO_BACKOFF, Sleeper.DEFAULT));
+        datasetService.isTableEmpty(
+            tableRef.getProjectId(),
+            tableRef.getDatasetId(),
+            tableRef.getTableId()));
 
     verify(response, times(2)).getStatusCode();
     verify(response, times(2)).getContent();
@@ -431,7 +443,10 @@ public class BigQueryServicesImplTest {
     thrown.expectMessage(String.format("Unable to list table data: %s", tableRef.getTableId()));
 
     try {
-      datasetService.isTableEmpty(tableRef, BackOff.ZERO_BACKOFF, Sleeper.DEFAULT);
+      datasetService.isTableEmpty(
+          tableRef.getProjectId(),
+          tableRef.getDatasetId(),
+          tableRef.getTableId());
     } finally {
       verify(response, times(1)).getStatusCode();
       verify(response, times(1)).getContent();
@@ -455,7 +470,10 @@ public class BigQueryServicesImplTest {
     thrown.expect(IOException.class);
     thrown.expectMessage(String.format("Unable to list table data: %s", tableRef.getTableId()));
 
-    datasetService.isTableEmpty(tableRef, BackOff.STOP_BACKOFF, Sleeper.DEFAULT);
+    datasetService.isTableEmpty(
+        tableRef.getProjectId(),
+        tableRef.getDatasetId(),
+        tableRef.getTableId());
   }
 
   @Test
